@@ -1,0 +1,3 @@
+@summoner = test4
+
+POST  https://localhost:7158/post/{{summoner}}

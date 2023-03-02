@@ -1,0 +1,3 @@
+@summoner = "tes43t"
+
+GET https://localhost:7158/get/{{summoner}}
