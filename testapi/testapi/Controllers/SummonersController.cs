@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using testapi.Models;
 using testapi.Contracts.summoners;
 using testapi.Services.Summoners;
+using System;
 
 namespace testapi.Controllers;
 
@@ -14,6 +15,10 @@ public class SummonersController : ControllerBase{
         _summonerService = summonerService;
     }
 
+    [Route("/error")]
+    public IActionResult HandleError() =>
+        Problem();
+
     [HttpGet("/get/{summoner}")]
     public IActionResult GetSummoner(string summoner){
         return Ok(summoner);
@@ -24,11 +29,12 @@ public class SummonersController : ControllerBase{
 
         var ResponseSummoner = new Summoner(summoner);
 
-        // TODO save to database
+        // TODO database
 
+        Task createSummoner = _summonerService.CreateSummoner(ResponseSummoner);
 
-        _summonerService.CreateSummoner(ResponseSummoner);
-
+        if(createSummoner.Exception is not null)
+            return Problem(createSummoner.Exception.InnerException.Message);
         List<string> temp = new List<string>() {"Test1", "Test2"};
         var response = new SummonerResponse(ResponseSummoner.Name, ResponseSummoner.Start, temp);
 
