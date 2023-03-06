@@ -928,19 +928,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ollib\\.nuget\\packages\\": {}
+    "C:\\Users\\Oliver Lillberg\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi.Contracts\\testapi.Contracts.csproj",
+      "projectUniqueName": "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi.Contracts\\testapi.Contracts.csproj",
       "projectName": "testapi.Contracts",
-      "projectPath": "c:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi.Contracts\\testapi.Contracts.csproj",
-      "packagesPath": "C:\\Users\\ollib\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi.Contracts\\obj\\",
+      "projectPath": "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi.Contracts\\testapi.Contracts.csproj",
+      "packagesPath": "C:\\Users\\Oliver Lillberg\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi.Contracts\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ollib\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Oliver Lillberg\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"

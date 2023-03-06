@@ -10,3 +10,15 @@ C:\Users\ollib\Dropbox\combitech\dotnet\testapi\testapi.Contracts\obj\Debug\net6
 C:\Users\ollib\Dropbox\combitech\dotnet\testapi\testapi.Contracts\obj\Debug\net6.0\refint\testapi.Contracts.dll
 C:\Users\ollib\Dropbox\combitech\dotnet\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.pdb
 C:\Users\ollib\Dropbox\combitech\dotnet\testapi\testapi.Contracts\obj\Debug\net6.0\ref\testapi.Contracts.dll
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\bin\Debug\net6.0\testapi.Contracts.deps.json
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\bin\Debug\net6.0\testapi.Contracts.dll
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\bin\Debug\net6.0\testapi.Contracts.pdb
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.csproj.AssemblyReference.cache
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.AssemblyInfoInputs.cache
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.AssemblyInfo.cs
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.csproj.CoreCompileInputs.cache
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.dll
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\refint\testapi.Contracts.dll
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\testapi.Contracts.pdb
+C:\Users\Oliver Lillberg\Documents\CHampRecAPI\testapi\testapi.Contracts\obj\Debug\net6.0\ref\testapi.Contracts.dll

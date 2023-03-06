@@ -947,19 +947,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ollib\\.nuget\\packages\\": {}
+    "C:\\Users\\Oliver Lillberg\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi\\testapi.csproj",
+      "projectUniqueName": "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi\\testapi.csproj",
       "projectName": "testapi",
-      "projectPath": "C:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi\\testapi.csproj",
-      "packagesPath": "C:\\Users\\ollib\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi\\obj\\",
+      "projectPath": "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi\\testapi.csproj",
+      "packagesPath": "C:\\Users\\Oliver Lillberg\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\ollib\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Oliver Lillberg\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net6.0"
@@ -971,8 +971,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi.Contracts\\testapi.Contracts.csproj": {
-              "projectPath": "C:\\Users\\ollib\\Dropbox\\combitech\\dotnet\\testapi\\testapi.Contracts\\testapi.Contracts.csproj"
+            "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi.Contracts\\testapi.Contracts.csproj": {
+              "projectPath": "C:\\Users\\Oliver Lillberg\\Documents\\CHampRecAPI\\testapi\\testapi.Contracts\\testapi.Contracts.csproj"
             }
           }
         }
