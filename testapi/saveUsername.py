@@ -6,7 +6,7 @@ import sys, os
 
 def main(name):
 
-    api_key = 'RGAPI-04442b87-532f-4378-93d5-baf4d0eaefba'
+    api_key = ''
     watcher = LolWatcher(api_key)
     my_region = 'euw1'
 
