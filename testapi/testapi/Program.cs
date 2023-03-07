@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using testapi.Services.Summoners;
+using testapi.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 {

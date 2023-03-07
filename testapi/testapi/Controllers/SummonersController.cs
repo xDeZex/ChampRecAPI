@@ -1,8 +1,10 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using testapi.Models;
 using testapi.Contracts.summoners;
 using testapi.Services.Summoners;
 using System;
+using testapi.Exceptions;
 
 namespace testapi.Controllers;
 
@@ -27,17 +29,26 @@ public class SummonersController : ControllerBase{
     [HttpPost("/post/{summoner}")]
     public IActionResult CreateSummoner(string summoner){
 
-        var ResponseSummoner = new Summoner(summoner);
-
-        // TODO database
+        var ResponseSummoner = new Summoner();
+        ResponseSummoner.summoner = summoner;
+        ResponseSummoner.Start = DateTime.UtcNow;
 
         Task createSummoner = _summonerService.CreateSummoner(ResponseSummoner);
 
-        if(createSummoner.Exception is not null)
-            return Problem(createSummoner.Exception.InnerException.Message);
-        List<string> temp = new List<string>() {"Test1", "Test2"};
-        var response = new SummonerResponse(ResponseSummoner.Name, ResponseSummoner.Start, temp);
+        
+        if(createSummoner.Exception is not null){
+            if (createSummoner.Exception.InnerException is HMException){
+                HMException taskEx = (HMException)createSummoner.Exception.InnerException;
+                
+                return Problem(taskEx.Message, statusCode: taskEx.HTTPCode);
+            }
+            Console.WriteLine("Non-handled Error");
+            return Problem(createSummoner.Exception.Message);
 
-        return CreatedAtAction(nameof(GetSummoner), new {summoner = ResponseSummoner.Name}, response);
+        }
+        var response = new CreateSummonerRequest(ResponseSummoner.summoner, ResponseSummoner.Start);
+        Console.WriteLine("Almost Created and Done");
+
+        return CreatedAtAction(nameof(CreateSummoner), response);
     }
 }

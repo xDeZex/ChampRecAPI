@@ -1,14 +1,13 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace testapi.Models;
+
 
 public class Summoner{
 
-    public string Name {get;}
-    public DateTime Start {get;}
+    [Key]
+    public string summoner {get; set;} = "";
+    public DateTime Start {get; set;}
 
-    public Summoner(string Name){
-        this.Name = Name;
-
-        Start = DateTime.UtcNow;
-    }
 }
