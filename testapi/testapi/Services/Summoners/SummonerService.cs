@@ -3,36 +3,51 @@ namespace testapi.Services.Summoners;
 using testapi.Models;
 using System.Data.Odbc;
 using OfficeOpenXml;
-using Microsoft.Data.SqlClient;
-using testapi.Data;
 using testapi.Exceptions;
 
 public class SummonerService : ISummonerService{
 
-    public async Task GetSummoner(Summoner summoner){
-        List<Cluster> clusters = GetClusters();
+    public async Task<string> GetSummoner(Summoner summoner){
+        List<Cluster> clusters = await GetClusters();
+        SummonerList summonerList = await GetSummoner(summoner.summoner);
+        string recommnedation = new Recommendation(summonerList.mList, clusters).recommendation;
+        return recommnedation;
     }
 
-    static async Task<List<Cluster>> GetClusters(){
-
-        List<Cluster> returnList = new();
-        string queryString = $"""SELECT * FROM "Summoners"."Cluster" """;
-        Console.WriteLine(queryString);
+    static async Task<SummonerList> GetSummoner(string name){
+        string queryString = $"""SELECT * FROM "Summoners"."Summoner" WHERE summoner = '{name.ToLower()}'""";
         OdbcCommand command = new OdbcCommand(queryString);
         using (OdbcConnection conn = new OdbcConnection("DSN=PostgreSQL35W")){
             conn.Open();
             command.Connection = conn;
             DbDataReader reader = await command.ExecuteReaderAsync();
+            object[] meta = new object[156];
+            if(!reader.Read()){
+                HMException e = new HMException("ERROR: Found no added summoner with that name.");
+                e.HTTPCode = 404;
+                throw e;
+            }
+            int i = reader.GetValues(meta);
+            reader.Close();
+            return new SummonerList(meta);
+        }
+    }
+    static async Task<List<Cluster>> GetClusters(){
+
+        List<Cluster> returnList = new();
+        string queryString = $"""SELECT * FROM "Summoners"."Cluster" """;
+        OdbcCommand command = new OdbcCommand(queryString);
+        using (OdbcConnection conn = new OdbcConnection("DSN=PostgreSQL35W")){
+            conn.Open();
+            command.Connection = conn;
+            DbDataReader reader = await command.ExecuteReaderAsync();
+            object[] meta = new object[156];
             while (reader.Read()){
-                Console.WriteLine(reader.GetType());
-                Console.WriteLine(reader);
-                break;
-                //returnList.Add(new Cluster())
+                int i = reader.GetValues(meta);
+                returnList.Add(new Cluster(meta));
             }
         }
         return returnList;
-
-
     }
 
     public async Task CreateSummoner(Summoner summoner){
@@ -58,7 +73,7 @@ public class SummonerService : ISummonerService{
         try
         {
 
-            string queryString = $"""INSERT INTO "Summoners"."Summoner" (summoner) VALUES ('{summoner.summoner}');""" ;
+            string queryString = $"""INSERT INTO "Summoners"."Summoner" (summoner, lastupdated) VALUES ('{summoner.summoner.ToLower()}', '{DateTime.MinValue}');""" ;
             Console.WriteLine(queryString);
             OdbcCommand command = new OdbcCommand(queryString);
             using (OdbcConnection conn = new OdbcConnection("DSN=PostgreSQL35W")){
@@ -70,7 +85,7 @@ public class SummonerService : ISummonerService{
         catch (OdbcException e){
             
             if (e.HResult == -2146232009){
-                
+                Console.WriteLine(e);
                 HMException newE = new HMException("ERROR: That summoner is already in the database.");
                 newE.HTTPCode = 409;
                 throw newE;
@@ -81,7 +96,6 @@ public class SummonerService : ISummonerService{
         }
         catch (System.Exception e)
         {
-            Console.WriteLine(e);
             throw e;
         }
         

@@ -1,3 +1,5 @@
+from datetime import datetime
+from requests import HTTPError
 from riotwatcher import LolWatcher, ApiError
 import pyodbc
 import json
@@ -22,16 +24,18 @@ def main():
     columns = ""
     for c in clist:
         columns += f"{c.lower()} = 0 AND "
-    
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     sqlQuery = f"""SELECT summoner FROM "Summoners"."Summoner"
-Where {columns[:-5]}"""
+Where (DATE_PART('day', '{now}'::timestamp - lastupdated) * 24 + 
+               DATE_PART('hour', '{now}'::timestamp - lastupdated)) * 60 +
+               DATE_PART('minute', '{now}'::timestamp - lastupdated) > 0;"""
+
     print(sqlQuery)
     cursor.execute(sqlQuery)
     summoners = []
     for row in cursor.fetchall():
         summoners.append(row[0])
     print(summoners)
-
 
 
     latest = watcher.data_dragon.versions_for_region(my_region)['n']['champion']
@@ -45,7 +49,16 @@ Where {columns[:-5]}"""
         champ_dict[row['key']] = row['id']
 
     for name in summoners:
-        me = watcher.summoner.by_name(my_region, name)
+        try:
+            me = watcher.summoner.by_name(my_region, name)
+        except HTTPError as e:
+            if(e.response.status_code == 404):
+                sqlQuery = f"""DELETE from "Summoners"."Summoner" WHERE summoner = '{name}'"""
+                print(sqlQuery)
+                cursor.execute(sqlQuery)
+                conn.commit()
+                continue
+            
         #print(me)
         champMastery = watcher.champion_mastery.by_summoner(my_region, me['id'])
         #print(champMastery)
@@ -64,7 +77,9 @@ Where {columns[:-5]}"""
         SET """ 
         for (x, y) in listofc:
             sqlInsert += f"""{x} = {y},"""
-        sqlInsert = sqlInsert[:-1] + f" WHERE summoner = '{name}';"
+
+        sqlInsert += f"""lastupdated = '{now}'"""
+        sqlInsert += f" WHERE summoner = '{name}';"
         print(sqlInsert)
         cursor.execute(sqlInsert)
         conn.commit()

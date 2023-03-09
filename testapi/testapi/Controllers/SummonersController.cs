@@ -23,7 +23,18 @@ public class SummonersController : ControllerBase{
 
     [HttpGet("/get/{summoner}")]
     public IActionResult GetSummoner(string summoner){
-        return Ok(summoner);
+        var ResponseSummoner = new Summoner();
+        ResponseSummoner.summoner = summoner;
+       
+
+        Task<string> getSummoner = _summonerService.GetSummoner(ResponseSummoner);
+
+        
+        if(getSummoner.Exception is not null){
+            return createProblem(getSummoner.Exception);
+        }
+
+        return Ok(getSummoner.Result);
     }
     
     [HttpPost("/post/{summoner}")]
@@ -37,18 +48,21 @@ public class SummonersController : ControllerBase{
 
         
         if(createSummoner.Exception is not null){
-            if (createSummoner.Exception.InnerException is HMException){
-                HMException taskEx = (HMException)createSummoner.Exception.InnerException;
-                
-                return Problem(taskEx.Message, statusCode: taskEx.HTTPCode);
-            }
-            Console.WriteLine("Non-handled Error");
-            return Problem(createSummoner.Exception.Message);
-
+            return createProblem(createSummoner.Exception);
         }
         var response = new CreateSummonerRequest(ResponseSummoner.summoner, ResponseSummoner.Start);
-        Console.WriteLine("Almost Created and Done");
-
         return CreatedAtAction(nameof(CreateSummoner), response);
+    }
+    [Route("QWWQEWQEQWEQWEWQE")]
+    public ObjectResult createProblem(AggregateException e){
+        if (e.InnerException is HMException){
+            HMException taskEx = (HMException)e.InnerException;
+                
+            return Problem(taskEx.Message, statusCode: taskEx.HTTPCode);
+                
+        }
+        Console.WriteLine("Non-handled Error");
+        Console.WriteLine(e.InnerException);
+        return Problem();
     }
 }
