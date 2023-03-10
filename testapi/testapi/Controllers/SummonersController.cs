@@ -27,14 +27,16 @@ public class SummonersController : ControllerBase{
         ResponseSummoner.summoner = summoner;
        
 
-        Task<string> getSummoner = _summonerService.GetSummoner(ResponseSummoner);
+        Task<string[]> getSummoner = _summonerService.GetSummoner(ResponseSummoner);
 
         
         if(getSummoner.Exception is not null){
             return createProblem(getSummoner.Exception);
         }
-
-        return Ok(getSummoner.Result);
+        Console.WriteLine(getSummoner.Result);
+        Console.WriteLine(getSummoner.Result.Length);
+        var response = new SummonerRequest(getSummoner.Result[0],getSummoner.Result[1],getSummoner.Result[2]);
+        return Ok(response);
     }
     
     [HttpPost("/post/{summoner}")]
@@ -51,6 +53,7 @@ public class SummonersController : ControllerBase{
             return createProblem(createSummoner.Exception);
         }
         var response = new CreateSummonerRequest(ResponseSummoner.summoner, ResponseSummoner.Start);
+        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4200");
         return CreatedAtAction(nameof(CreateSummoner), response);
     }
     [Route("QWWQEWQEQWEQWEWQE")]

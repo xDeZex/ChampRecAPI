@@ -1,7 +1,7 @@
 namespace testapi.Contracts.summoners;
 
 public record SummonerRequest(
-    string Name,
-    DateTime Created,
-    List<string> Champions
+    string one,
+    string two,
+    string three
 );

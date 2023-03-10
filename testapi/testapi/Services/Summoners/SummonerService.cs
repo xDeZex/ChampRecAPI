@@ -7,11 +7,11 @@ using testapi.Exceptions;
 
 public class SummonerService : ISummonerService{
 
-    public async Task<string> GetSummoner(Summoner summoner){
+    public async Task<string[]> GetSummoner(Summoner summoner){
         List<Cluster> clusters = await GetClusters();
         SummonerList summonerList = await GetSummoner(summoner.summoner);
-        string recommnedation = new Recommendation(summonerList.mList, clusters).recommendation;
-        return recommnedation;
+        string[] recommendation = new Recommendation(summonerList.mList, clusters).recommendation;
+        return recommendation;
     }
 
     static async Task<SummonerList> GetSummoner(string name){

@@ -8,7 +8,7 @@ import sys, os
 
 def main():
 
-    api_key = 'RGAPI-64d91fc3-b907-4787-9e70-b8d4f2fa2272'
+    api_key = 'RGAPI-d8b08af1-7212-439c-a1a5-4f9e65158cb9'
     watcher = LolWatcher(api_key)
     my_region = 'euw1'
 
@@ -28,7 +28,7 @@ def main():
     sqlQuery = f"""SELECT summoner FROM "Summoners"."Summoner"
 Where (DATE_PART('day', '{now}'::timestamp - lastupdated) * 24 + 
                DATE_PART('hour', '{now}'::timestamp - lastupdated)) * 60 +
-               DATE_PART('minute', '{now}'::timestamp - lastupdated) > 0;"""
+               DATE_PART('minute', '{now}'::timestamp - lastupdated) > 60;"""
 
     print(sqlQuery)
     cursor.execute(sqlQuery)
@@ -57,6 +57,9 @@ Where (DATE_PART('day', '{now}'::timestamp - lastupdated) * 24 +
                 print(sqlQuery)
                 cursor.execute(sqlQuery)
                 conn.commit()
+                continue
+            else:
+                print("ERROR ", e, me)
                 continue
             
         #print(me)

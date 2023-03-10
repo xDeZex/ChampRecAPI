@@ -7,7 +7,7 @@ namespace testapi.Models;
 
 public class Recommendation{
 
-    public string recommendation {get;}
+    public string[] recommendation {get;} = new string[3];
 
 
     public Recommendation(double[] summonerList, List<Cluster> clusters){
@@ -62,13 +62,14 @@ public class Recommendation{
 
         var sortedD = toBeSorted.OrderBy(t => t.Item2).ToList();
         //inte rek top 10 eller 25% 
-        
-        recommendation = "Found None";
+        int j = 0;
         for (int i = 0; i < 155; i++)
         {
             if(!top10.Contains(sortedD[i])){
-                recommendation = sortedD[i].Item1;
-                break;
+                recommendation[j] = sortedD[i].Item1.ToLower();
+                j++;
+                if (recommendation[2] is not null)
+                    break;
             }
         }
     }
