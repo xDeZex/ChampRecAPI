@@ -23,13 +23,23 @@ public class SummonerService : ISummonerService{
             DbDataReader reader = await command.ExecuteReaderAsync();
             object[] meta = new object[156];
             if(!reader.Read()){
-                HMException e = new HMException("ERROR: Found no added summoner with that name.");
+                HMException e = new HMException("Found no added summoner with that name.");
                 e.HTTPCode = 404;
                 throw e;
             }
+
             int i = reader.GetValues(meta);
             reader.Close();
-            return new SummonerList(meta);
+            var summonerList = new SummonerList(meta);
+
+            if(summonerList.mList.Sum() == 0){
+                Console.WriteLine("origin");
+                HMException e = new HMException("That summoner has not yet been analysed, or has no played games.");
+                e.HTTPCode = 406;
+                throw e;
+            }
+
+            return summonerList;
         }
     }
     static async Task<List<Cluster>> GetClusters(){
@@ -86,7 +96,7 @@ public class SummonerService : ISummonerService{
             
             if (e.HResult == -2146232009){
                 Console.WriteLine(e);
-                HMException newE = new HMException("ERROR: That summoner is already in the database.");
+                HMException newE = new HMException("That summoner is already in the database.");
                 newE.HTTPCode = 409;
                 throw newE;
 

@@ -31,6 +31,7 @@ public class SummonersController : ControllerBase{
 
         
         if(getSummoner.Exception is not null){
+            Console.WriteLine("Create Problem");
             return createProblem(getSummoner.Exception);
         }
         Console.WriteLine(getSummoner.Result);

@@ -7,7 +7,7 @@ namespace testapi.Models;
 public class SummonerList{
 
     [Key]
-    public string name {get; set;}
+    public string name {get; set;} = "";
     public double[] mList {get;} = new double[155];
 
     public SummonerList(object[] meta){
