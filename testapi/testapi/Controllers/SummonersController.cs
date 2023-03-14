@@ -5,6 +5,7 @@ using testapi.Contracts.summoners;
 using testapi.Services.Summoners;
 using System;
 using testapi.Exceptions;
+using Amazon.DynamoDBv2.Model;
 
 namespace testapi.Controllers;
 
@@ -23,13 +24,12 @@ public class SummonersController : ControllerBase{
 
     [HttpGet("/get/{summoner}")]
     public IActionResult GetSummoner(string summoner){
+        Console.WriteLine(summoner);
         var ResponseSummoner = new Summoner();
         ResponseSummoner.summoner = summoner;
        
 
         Task<string[]> getSummoner = _summonerService.GetSummoner(ResponseSummoner);
-
-        
         if(getSummoner.Exception is not null){
             Console.WriteLine("Create Problem");
             return createProblem(getSummoner.Exception);
@@ -49,13 +49,21 @@ public class SummonersController : ControllerBase{
 
         Task createSummoner = _summonerService.CreateSummoner(ResponseSummoner);
 
+        try{
+            createSummoner.Wait();
+        }
+        catch{}
         
         if(createSummoner.Exception is not null){
             return createProblem(createSummoner.Exception);
         }
         var response = new CreateSummonerRequest(ResponseSummoner.summoner, ResponseSummoner.Start);
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4200");
         return CreatedAtAction(nameof(CreateSummoner), response);
+    }
+    [HttpPost("/simple")]
+    public IActionResult simple(){
+
+        return Ok();
     }
     [Route("QWWQEWQEQWEQWEWQE")]
     public ObjectResult createProblem(AggregateException e){

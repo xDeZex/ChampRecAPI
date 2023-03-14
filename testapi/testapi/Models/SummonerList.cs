@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
 
 namespace testapi.Models;
 
@@ -7,14 +9,22 @@ namespace testapi.Models;
 public class SummonerList{
 
     [Key]
-    public string name {get; set;} = "";
+    public string summoner {get; set;} = "";
     public double[] mList {get;} = new double[155];
 
-    public SummonerList(object[] meta){
-        name = Convert.ToString(meta[0]);
-        for (int i = 1; i < meta.Count(); i++)
+    public SummonerList(Document doc){
+
+        var keys = doc.Keys;
+        int i = 0;
+        foreach (var key in keys.OrderBy(x => x))
         {
-            mList[i-1] = (Convert.ToDouble(meta[i]));
+            if(key == "summoner")
+                summoner = doc[key];
+            else{
+                mList[i] = (double)doc[key];
+                i++;
+            }
+                
         }
     }
 

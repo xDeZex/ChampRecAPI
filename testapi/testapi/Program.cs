@@ -18,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
                             policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
                         });
     });
+    builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 }
 
 var app = builder.Build();
