@@ -37,7 +37,6 @@ public class Recommendation{
         {
             toBeSorted.Add(new Tuple<string, double, double>(championNames[i], summonerV[i]- minDistV[i], summonerV[i]));
         }
-        Console.WriteLine(string.Join(", ", minDistV));
         double sumM = summonerV.Sum();
         var sortedM = toBeSorted.OrderBy(t => t.Item3).ToList();
         sortedM.Reverse();

@@ -26,16 +26,19 @@ public class SummonersController : ControllerBase{
     public IActionResult GetSummoner(string summoner){
         Console.WriteLine(summoner);
         var ResponseSummoner = new Summoner();
-        ResponseSummoner.summoner = summoner;
+        ResponseSummoner.summoner = summoner.ToLower();
        
 
         Task<string[]> getSummoner = _summonerService.GetSummoner(ResponseSummoner);
+
+        try{
+            getSummoner.Wait();
+        }
+        catch{}
+
         if(getSummoner.Exception is not null){
-            Console.WriteLine("Create Problem");
             return createProblem(getSummoner.Exception);
         }
-        Console.WriteLine(getSummoner.Result);
-        Console.WriteLine(getSummoner.Result.Length);
         var response = new SummonerRequest(getSummoner.Result[0],getSummoner.Result[1],getSummoner.Result[2]);
         return Ok(response);
     }
@@ -44,7 +47,7 @@ public class SummonersController : ControllerBase{
     public IActionResult CreateSummoner(string summoner){
 
         var ResponseSummoner = new Summoner();
-        ResponseSummoner.summoner = summoner;
+        ResponseSummoner.summoner = summoner.ToLower();
         ResponseSummoner.Start = DateTime.UtcNow;
 
         Task createSummoner = _summonerService.CreateSummoner(ResponseSummoner);
@@ -59,11 +62,6 @@ public class SummonersController : ControllerBase{
         }
         var response = new CreateSummonerRequest(ResponseSummoner.summoner, ResponseSummoner.Start);
         return CreatedAtAction(nameof(CreateSummoner), response);
-    }
-    [HttpPost("/simple")]
-    public IActionResult simple(){
-
-        return Ok();
     }
     [Route("QWWQEWQEQWEQWEWQE")]
     public ObjectResult createProblem(AggregateException e){

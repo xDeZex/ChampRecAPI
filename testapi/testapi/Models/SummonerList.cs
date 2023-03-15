@@ -16,11 +16,12 @@ public class SummonerList{
 
         var keys = doc.Keys;
         int i = 0;
+        
         foreach (var key in keys.OrderBy(x => x))
         {
             if(key == "summoner")
                 summoner = doc[key];
-            else{
+            else if(key != "lastupdated"){
                 mList[i] = (double)doc[key];
                 i++;
             }
