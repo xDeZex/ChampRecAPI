@@ -39,7 +39,8 @@ public class SummonersController : ControllerBase{
         if(getSummoner.Exception is not null){
             return createProblem(getSummoner.Exception);
         }
-        var response = new SummonerRequest(getSummoner.Result[0],getSummoner.Result[1],getSummoner.Result[2]);
+        var request = new SummonerRequest(getSummoner.Result[0],getSummoner.Result[1],getSummoner.Result[2]);
+        var response = new WrapperGetRequest(request);
         return Ok(response);
     }
     
