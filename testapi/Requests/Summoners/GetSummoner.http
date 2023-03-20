@@ -1,4 +1,4 @@
-@summoner = frassefrass
+@summoner = frassefrass1
 
 GET https://localhost:7158/get/{{summoner}}
 
