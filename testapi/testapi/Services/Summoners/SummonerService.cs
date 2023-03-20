@@ -1,62 +1,122 @@
 using System.Data.Common;
 namespace testapi.Services.Summoners;
 using testapi.Models;
-using System.Data.Odbc;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using OfficeOpenXml;
 using testapi.Exceptions;
+using System.Data.Odbc;
 
 public class SummonerService : ISummonerService{
 
+    List<string> clist = new List<string>{"Aatrox", "Ahri", "Akali", "Alistar", "Amumu", "Anivia", "Annie", "Aphelios", "Ashe", "AurelionSol", "Azir", "Bard", "Blitzcrank", "Brand", "Braum", "Caitlyn", "Camille", "Cassiopeia", "Chogath", "Corki", "Darius", "Diana", "Draven", "DrMundo", "Ekko", "Elise", "Evelynn", "Ezreal", "Fiddlesticks", "Fiora", "Fizz", "Galio", "Gangplank", "Garen", "Gnar", "Gragas", "Graves", "Gwen", "Hecarim", "Heimerdinger", "Illaoi", "Irelia", "Ivern", "Janna", "JarvanIV", "Jax", "Jayce", "Jhin", "Jinx", "Kaisa", "Kalista", "Karma", "Karthus", "Kassadin", "Katarina", "Kayle", "Kayn", "Kennen", "Khazix", "Kindred", "Kled", "KogMaw", "Leblanc", "LeeSin", "Leona", "Lillia", "Lissandra", "Lucian", "Lulu", "Lux", "Malphite", "Malzahar", "Maokai", "MasterYi", "MissFortune", "MonkeyKing", "Mordekaiser", "Morgana", "Nami", "Nasus", "Nautilus", "Neeko", "Nidalee", "Nocturne", "Nunu", "Olaf", "Orianna", "Ornn", "Pantheon", "Poppy", "Pyke", "Qiyana", "Quinn", "Rakan", "Rammus", "RekSai", "Rell", "Renekton", "Rengar", "Riven", "Rumble", "Ryze", "Samira", "Sejuani", "Senna", "Seraphine", "Sett", "Shaco", "Shen", "Shyvana", "Singed", "Sion", "Sivir", "Skarner", "Sona", "Soraka", "Swain", "Sylas", "Syndra", "TahmKench", "Taliyah", "Talon", "Taric", "Teemo", "Thresh", "Tristana", "Trundle", "Tryndamere", "TwistedFate", "Twitch", "Udyr", "Urgot", "Varus", "Vayne", "Veigar", "Velkoz", "Vi", "Viego", "Viktor", "Vladimir", "Volibear", "Warwick", "Xayah", "Xerath", "XinZhao", "Yasuo", "Yone", "Yorick", "Yuumi", "Zac", "Zed", "Ziggs", "Zilean", "Zoe", "Zyra"};
+
     public async Task<string[]> GetSummoner(Summoner summoner){
-        List<Cluster> clusters = await GetClusters();
-        SummonerList summonerList = await GetSummoner(summoner.summoner);
-        string[] recommendation = new Recommendation(summonerList.mList, clusters).recommendation;
-        return recommendation;
+        try{ 
+            SummonerList summonerList = await GetSummoner("summoners", summoner.summoner);
+            List<Cluster> clusters = await GetClusters();
+            string[] recommendation = new Recommendation(summonerList.mList, clusters).recommendation;
+            return recommendation;
+        }
+        catch (Exception e){
+            throw e;
+        }
+
+        
     }
 
-    static async Task<SummonerList> GetSummoner(string name){
-        string queryString = $"""SELECT * FROM "Summoners"."Summoner" WHERE summoner = '{name.ToLower()}'""";
-        OdbcCommand command = new OdbcCommand(queryString);
-        using (OdbcConnection conn = new OdbcConnection("DSN=PostgreSQL35W")){
-            conn.Open();
-            command.Connection = conn;
-            DbDataReader reader = await command.ExecuteReaderAsync();
-            object[] meta = new object[156];
-            if(!reader.Read()){
-                HMException e = new HMException("Found no added summoner with that name.");
-                e.HTTPCode = 404;
-                throw e;
-            }
+    private static async Task<List<Dictionary<string, AttributeValue>>> ScanDBAsync(string table)
+    {
+        using var client = new AmazonDynamoDBClient(Amazon.RegionEndpoint.EUNorth1);
 
-            int i = reader.GetValues(meta);
-            reader.Close();
-            var summonerList = new SummonerList(meta);
+        var response = await client.ScanAsync(new ScanRequest(table));
 
-            if(summonerList.mList.Sum() == 0){
-                Console.WriteLine("origin");
-                HMException e = new HMException("That summoner has not yet been analysed, or has no played games.");
-                e.HTTPCode = 406;
-                throw e;
-            }
+        var items = response.Items;
 
-            return summonerList;
+
+        if(response.LastEvaluatedKey != null){
+            var request = new ScanRequest(table);
+            
+            request.ExclusiveStartKey = response.LastEvaluatedKey;
+
+            response = await client.ScanAsync(request);
+
+            items.AddRange(response.Items);
         }
+
+        return items;
+    }
+
+    private static async Task<Document> GetDBAsync(string tableName, string key)
+    {
+        using var client = new AmazonDynamoDBClient(Amazon.RegionEndpoint.EUNorth1);
+
+        Table table = Table.LoadTable(client, tableName);
+        
+
+        Document document = await table.GetItemAsync(key);
+        return document;
+    }
+
+    private async Task<Document> PutSummonerDBAsync(string tableName, string key)
+    {
+        using var client = new AmazonDynamoDBClient(Amazon.RegionEndpoint.EUNorth1);
+
+        Table table = Table.LoadTable(client, tableName);
+
+        var summoner = new Document();
+        summoner["summoner"] = key.ToLower();
+
+        foreach (string c in this.clist)
+        {
+            summoner[c.ToLower()] = 0;
+        }
+        summoner["lastupdated"] = DateTime.UtcNow;
+
+
+        Expression expr = new Expression();
+        expr.ExpressionStatement = "attribute_not_exists(summoner)";
+
+        UpdateItemOperationConfig config = new UpdateItemOperationConfig()
+        {
+            ConditionalExpression = expr
+        };
+        Document document = await table.UpdateItemAsync(summoner, config);
+        return document;
+    }
+    static async Task<SummonerList> GetSummoner(string tableName, string name){
+        using var client = new AmazonDynamoDBClient(Amazon.RegionEndpoint.EUNorth1);
+
+        Table table = Table.LoadTable(client, tableName);
+
+        Document summoner = await table.GetItemAsync(name);
+
+        if(summoner is null){
+            var e = new HMException("Didn't find that summoner in the database.");
+            e.HTTPCode = 404;
+            throw e;
+        }
+
+        return new SummonerList(summoner);
     }
     static async Task<List<Cluster>> GetClusters(){
 
         List<Cluster> returnList = new();
-        string queryString = $"""SELECT * FROM "Summoners"."Cluster" """;
-        OdbcCommand command = new OdbcCommand(queryString);
-        using (OdbcConnection conn = new OdbcConnection("DSN=PostgreSQL35W")){
-            conn.Open();
-            command.Connection = conn;
-            DbDataReader reader = await command.ExecuteReaderAsync();
-            object[] meta = new object[156];
-            while (reader.Read()){
-                int i = reader.GetValues(meta);
-                returnList.Add(new Cluster(meta));
-            }
+
+        var ddbList = await ScanDBAsync("clusters");
+        Console.WriteLine("len ddb" + ddbList.Count);
+
+        foreach (var cluster in ddbList)
+        {
+            returnList.Add(new Cluster(Document.FromAttributeMap(cluster)));
         }
+        //Console.WriteLine(returnList[0].id);
+        foreach (var item in returnList[0].mList)
+        {   
+            //Console.Write($"{item}, ");
+        }
+        Console.WriteLine("len " + returnList.Count);
         return returnList;
     }
 
@@ -66,97 +126,23 @@ public class SummonerService : ISummonerService{
 
         try
         {
-            await SaveSummonerDB(summoner);
+            await PutSummonerDBAsync("summoners", summoner.summoner);
         }
         catch (HMException e){
             Console.WriteLine("NEw E");
             throw e;
         }
+        catch (ConditionalCheckFailedException e){
+            Console.WriteLine("NEw E db");
+            HMException exc = new HMException("That summoner is already in the database.");
+            exc.HTTPCode = 409;
+            throw exc;
+        }
         catch (System.Exception e)
         {
             Console.WriteLine("testFel");
-
             throw e;
         }
-    }
-    static async Task SaveSummonerDB(Summoner summoner){
-        try
-        {
-
-            string queryString = $"""INSERT INTO "Summoners"."Summoner" (summoner, lastupdated) VALUES ('{summoner.summoner.ToLower()}', '{DateTime.MinValue}');""" ;
-            Console.WriteLine(queryString);
-            OdbcCommand command = new OdbcCommand(queryString);
-            using (OdbcConnection conn = new OdbcConnection("DSN=PostgreSQL35W")){
-                conn.Open();
-                command.Connection = conn;
-                await command.ExecuteNonQueryAsync();
-            }
-        }
-        catch (OdbcException e){
-            
-            if (e.HResult == -2146232009){
-                Console.WriteLine(e);
-                HMException newE = new HMException("That summoner is already in the database.");
-                newE.HTTPCode = 409;
-                throw newE;
-
-            }
-            throw e;
-
-        }
-        catch (System.Exception e)
-        {
-            throw e;
-        }
-        
-    }
-    static async Task SaveExcelFile(Summoner summoner, FileInfo file){
-        try
-        {
-            using var package = new ExcelPackage(file);
-            Console.WriteLine("Test");
-            Console.WriteLine(package.Workbook.Worksheets);
-            var ws = package.Workbook.Worksheets[0];
-            
-            Console.WriteLine("TEst1");
-            var temp = ws.Dimension;
-            Console.WriteLine($"C: {temp.End.Column} R: {temp.End.Row}");
-            Console.WriteLine("TEst12");
-            string name = summoner.summoner;
-            bool alreadyExists = false;
-            Console.WriteLine("TEst2");
-        
-            if(ws.Dimension is null){
-            ws.Cells[1, 1].Value = name;
-            Console.WriteLine("Empty", name);
-            await package.SaveAsync();
-            return;
-            }
-            for (int i = 1; i <= ws.Dimension.End.Row; i++){
-                Console.WriteLine(i);
-                var cell = ws.Cells[i, 1].Value.ToString();
-                if (cell is string)
-                    if (cell.Trim() == name){
-                        alreadyExists = true;
-                    }
-                if (alreadyExists)
-                    break; 
-            } 
-            if(!alreadyExists){
-                ws.Cells[ws.Dimension.End.Row + 1, 1].Value = name;
-                Console.WriteLine("NonEmpty", name);
-                await package.SaveAsync();
-                return;
-            }
-            Console.WriteLine("Not New");
-            throw new Exception("Not New");
-        }
-        catch (System.Exception e)
-        {
-            Console.WriteLine(e);
-            throw e;
-        }
-        
     }
 }
 

@@ -5,6 +5,7 @@ using testapi.Contracts.summoners;
 using testapi.Services.Summoners;
 using System;
 using testapi.Exceptions;
+using Amazon.DynamoDBv2.Model;
 
 namespace testapi.Controllers;
 
@@ -23,20 +24,23 @@ public class SummonersController : ControllerBase{
 
     [HttpGet("/get/{summoner}")]
     public IActionResult GetSummoner(string summoner){
+        Console.WriteLine(summoner);
         var ResponseSummoner = new Summoner();
-        ResponseSummoner.summoner = summoner;
+        ResponseSummoner.summoner = summoner.ToLower();
        
 
         Task<string[]> getSummoner = _summonerService.GetSummoner(ResponseSummoner);
 
-        
+        try{
+            getSummoner.Wait();
+        }
+        catch{}
+
         if(getSummoner.Exception is not null){
-            Console.WriteLine("Create Problem");
             return createProblem(getSummoner.Exception);
         }
-        Console.WriteLine(getSummoner.Result);
-        Console.WriteLine(getSummoner.Result.Length);
-        var response = new SummonerRequest(getSummoner.Result[0],getSummoner.Result[1],getSummoner.Result[2]);
+        var request = new SummonerRequest(getSummoner.Result[0],getSummoner.Result[1],getSummoner.Result[2]);
+        var response = new WrapperGetRequest(request);
         return Ok(response);
     }
     
@@ -44,17 +48,20 @@ public class SummonersController : ControllerBase{
     public IActionResult CreateSummoner(string summoner){
 
         var ResponseSummoner = new Summoner();
-        ResponseSummoner.summoner = summoner;
+        ResponseSummoner.summoner = summoner.ToLower();
         ResponseSummoner.Start = DateTime.UtcNow;
 
         Task createSummoner = _summonerService.CreateSummoner(ResponseSummoner);
 
+        try{
+            createSummoner.Wait();
+        }
+        catch{}
         
         if(createSummoner.Exception is not null){
             return createProblem(createSummoner.Exception);
         }
         var response = new CreateSummonerRequest(ResponseSummoner.summoner, ResponseSummoner.Start);
-        HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4200");
         return CreatedAtAction(nameof(CreateSummoner), response);
     }
     [Route("QWWQEWQEQWEQWEWQE")]

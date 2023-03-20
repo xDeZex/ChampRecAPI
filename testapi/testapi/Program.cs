@@ -15,9 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
         options.AddPolicy(name: MyAllowSpecificOrigins,
                         policy  =>
                         {
-                            policy.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+                            policy.WithOrigins("https://xdezex.github.io", "http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
                         });
     });
+    builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 }
 
 var app = builder.Build();
