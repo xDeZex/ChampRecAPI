@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace testapi.Models;
+namespace lolapi.Models;
 
 
 public class Recommendation{

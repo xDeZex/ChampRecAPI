@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Amazon.DynamoDBv2.DocumentModel;
 using Newtonsoft.Json;
 
-namespace testapi.Models;
+namespace lolapi.Models;
 
 
 public class SummonerList{

@@ -1,11 +1,11 @@
 using System.Data.Common;
-namespace testapi.Services.Summoners;
-using testapi.Models;
+namespace lolapi.Services.Summoners;
+using lolapi.Models;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using OfficeOpenXml;
-using testapi.Exceptions;
+using lolapi.Exceptions;
 using System.Data.Odbc;
 
 public class SummonerService : ISummonerService{

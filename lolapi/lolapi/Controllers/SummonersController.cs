@@ -1,13 +1,13 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using testapi.Models;
-using testapi.Contracts.summoners;
-using testapi.Services.Summoners;
+using lolapi.Models;
+using lolapi.Contracts.summoners;
+using lolapi.Services.Summoners;
 using System;
-using testapi.Exceptions;
+using lolapi.Exceptions;
 using Amazon.DynamoDBv2.Model;
 
-namespace testapi.Controllers;
+namespace lolapi.Controllers;
 
 [ApiController]
 public class SummonersController : ControllerBase{

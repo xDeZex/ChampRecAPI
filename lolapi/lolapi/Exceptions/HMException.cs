@@ -1,4 +1,4 @@
-namespace testapi.Exceptions;
+namespace lolapi.Exceptions;
 
 public class HMException: Exception{
     public int HTTPCode {get; set;}

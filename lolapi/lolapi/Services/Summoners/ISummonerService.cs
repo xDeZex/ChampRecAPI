@@ -1,6 +1,6 @@
-namespace testapi.Services.Summoners;
+namespace lolapi.Services.Summoners;
 
-using testapi.Models;
+using lolapi.Models;
 
 public interface ISummonerService{
     Task CreateSummoner(Summoner summoner);

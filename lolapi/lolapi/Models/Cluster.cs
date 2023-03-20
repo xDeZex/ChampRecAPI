@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Amazon.DynamoDBv2.DocumentModel;
 
-namespace testapi.Models;
+namespace lolapi.Models;
 
 
 public class Cluster{

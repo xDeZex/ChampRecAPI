@@ -1,6 +1,6 @@
-using testapi.Models;
+using lolapi.Models;
 using Microsoft.EntityFrameworkCore;
-namespace testapi.Data;
+namespace lolapi.Data;
 
 public class AppDbContext: DbContext
 {

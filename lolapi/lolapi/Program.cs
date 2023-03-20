@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using testapi.Services.Summoners;
-using testapi.Data;
+using lolapi.Services.Summoners;
+using lolapi.Data;
 using Microsoft.EntityFrameworkCore;
 
 

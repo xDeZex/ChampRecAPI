@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace testapi.Models;
+namespace lolapi.Models;
 
 
 public class Summoner{

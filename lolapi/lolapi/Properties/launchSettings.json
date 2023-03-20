@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "testapi": {
+    "lolapi": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

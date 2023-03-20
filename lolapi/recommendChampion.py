@@ -17,7 +17,7 @@ def main(name):
     watcher = LolWatcher(api_key)
     my_region = 'euw1'
 
-    conn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\...\testapi.accdb;')
+    conn = pyodbc.connect(r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=C:\Users\...\lolapi.accdb;')
     cursor = conn.cursor()
     cursor.execute('select * from Clusters')
     clusters = cursor.fetchall()
