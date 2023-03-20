@@ -24,7 +24,6 @@ public class SummonersController : ControllerBase{
 
     [HttpGet("/get/{summoner}")]
     public IActionResult GetSummoner(string summoner){
-        Console.WriteLine(summoner);
         var ResponseSummoner = new Summoner();
         ResponseSummoner.summoner = summoner.ToLower();
        

@@ -26,7 +26,6 @@ public class Cluster{
 
                 
         }
-        //Console.WriteLine();
     }
 
 }
