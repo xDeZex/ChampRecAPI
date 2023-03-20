@@ -105,18 +105,11 @@ public class SummonerService : ISummonerService{
         List<Cluster> returnList = new();
 
         var ddbList = await ScanDBAsync("clusters");
-        Console.WriteLine("len ddb" + ddbList.Count);
 
         foreach (var cluster in ddbList)
         {
             returnList.Add(new Cluster(Document.FromAttributeMap(cluster)));
         }
-        //Console.WriteLine(returnList[0].id);
-        foreach (var item in returnList[0].mList)
-        {   
-            //Console.Write($"{item}, ");
-        }
-        Console.WriteLine("len " + returnList.Count);
         return returnList;
     }
 
@@ -129,18 +122,15 @@ public class SummonerService : ISummonerService{
             await PutSummonerDBAsync("summoners", summoner.summoner);
         }
         catch (HMException e){
-            Console.WriteLine("NEw E");
             throw e;
         }
         catch (ConditionalCheckFailedException e){
-            Console.WriteLine("NEw E db");
             HMException exc = new HMException("That summoner is already in the database.");
             exc.HTTPCode = 409;
             throw exc;
         }
         catch (System.Exception e)
         {
-            Console.WriteLine("testFel");
             throw e;
         }
     }

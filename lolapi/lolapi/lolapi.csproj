@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\testapi.Contracts\testapi.Contracts.csproj" />
+    <ProjectReference Include="..\lolapi.Contracts\lolapi.Contracts.csproj" />
     
   </ItemGroup>
 
