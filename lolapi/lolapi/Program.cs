@@ -23,11 +23,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
+    if (app.Environment.IsDevelopment()){
+        Console.WriteLine("DEV");
+        app.UseExceptionHandler("/error-development");
+    }
+    else{
+        app.UseExceptionHandler("/error");
+    }
     app.UseCors(MyAllowSpecificOrigins);
     app.UseHttpsRedirection();
     app.MapControllers();
     app.Run();
-    app.UseExceptionHandler("/error");
 }
 
 

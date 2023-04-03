@@ -6,6 +6,7 @@ using lolapi.Services.Summoners;
 using System;
 using lolapi.Exceptions;
 using Amazon.DynamoDBv2.Model;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace lolapi.Controllers;
 
@@ -18,27 +19,16 @@ public class SummonersController : ControllerBase{
         _summonerService = summonerService;
     }
 
-    [Route("/error")]
-    public IActionResult HandleError() =>
-        Problem();
-
     [HttpGet("/get/{summoner}")]
     public IActionResult GetSummoner(string summoner){
         var ResponseSummoner = new Summoner();
         ResponseSummoner.summoner = summoner.ToLower();
        
 
-        Task<string[]> getSummoner = _summonerService.GetSummoner(ResponseSummoner);
+        
+        string[] getSummoner = _summonerService.GetSummoner(ResponseSummoner);
 
-        try{
-            getSummoner.Wait();
-        }
-        catch{}
-
-        if(getSummoner.Exception is not null){
-            return createProblem(getSummoner.Exception);
-        }
-        var request = new SummonerRequest(getSummoner.Result[0],getSummoner.Result[1],getSummoner.Result[2]);
+        var request = new SummonerRequest(getSummoner[0],getSummoner[1],getSummoner[2]);
         var response = new WrapperGetRequest(request);
         return Ok(response);
     }
@@ -73,6 +63,50 @@ public class SummonersController : ControllerBase{
         }
         Console.WriteLine("Non-handled Error");
         Console.WriteLine(e.InnerException);
+        return Problem();
+    }
+    
+
+    [Route("/error-development")]
+    public IActionResult HandleErrorDevelopment([FromServices] IHostEnvironment hostEnvironment){
+        Console.WriteLine("DEV ERROR");
+        if (!hostEnvironment.IsDevelopment())
+        {
+            return NotFound();
+        }
+
+        var e = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
+
+        if (e.Error is AggregateException){
+            if (e.Error.InnerException is HMException){
+                HMException taskEx = (HMException)e.Error.InnerException;
+
+                return Problem(taskEx.Message, statusCode: taskEx.HTTPCode);
+                    
+            }
+            
+        }
+        
+        return Problem(
+            detail: e.Error.StackTrace,
+            title: e.Error.Message);
+    }
+
+    [Route("/error")]
+    public IActionResult HandleError(){
+
+        var e = HttpContext.Features.Get<IExceptionHandlerFeature>()!;
+        
+        if (e.Error is AggregateException){
+            if (e.Error.InnerException is HMException){
+                HMException taskEx = (HMException)e.Error.InnerException;
+        
+                return Problem(taskEx.Message, statusCode: taskEx.HTTPCode);
+                    
+            }
+            
+        }
+
         return Problem();
     }
 }
